@@ -10,20 +10,21 @@ from pyspark import SparkContext
 
 def mapper(line):
     year = line[15:19]
-    temp = line[87:92]
-    # print(line)
-    #print("year: %s, temp: %f" % (year, temp))
-    return (year, temp)
+    temp = int(line[87:92])
+    # print(line[87:92])
+    # print("year: %s, temp: %i" % (year, temp))
 
+    if temp >= 9999:
+        temp = 0
 
-def reducer(x, y):
-    return min(x, y)
+    return (year, temp / float(10))
 
 if __name__ == "__main__":
     sc = SparkContext(appName="MaxTemperature")
-    lines = sc.textFile("/home/NOAA_DATA/20{08}")
+    lines = sc.textFile("/home/NOAA_DATA/20{08,09,10,11,12}")
+    #lines = sc.textFile("155500-99999-2008.gz")
     temperatures = lines.map(mapper) \
-        .reduceByKey(reducer)
+        .reduceByKey(max)
     output = temperatures.collect()
     for (year, temperature) in output:
         print("%s: %i" % (year, temperature))
