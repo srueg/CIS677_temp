@@ -1,4 +1,5 @@
 # wordcount program
+# -*- coding: utf-8 -*-
 
 from __future__ import print_function
 
@@ -21,12 +22,13 @@ def mapper(line):
 
 if __name__ == "__main__":
     sc = SparkContext(appName="MaxTemperature")
-    lines = sc.textFile("/home/NOAA_DATA/20{08,09,10,11,12}")
+    lines = sc.textFile(
+        "/home/NOAA_DATA/20{08,09,10,11,12}", use_unicode=False)
     #lines = sc.textFile("155500-99999-2008.gz")
     temperatures = lines.map(mapper) \
         .reduceByKey(max)
     output = temperatures.collect()
     for (year, temperature) in output:
-        print("%s: %i" % (year, temperature))
+        print("Year %s: %i° C" % (year, temperature))
 
     sc.stop()
