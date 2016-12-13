@@ -15,9 +15,11 @@ def mapper(line):
     # print(line[87:92])
     # print("year: %s, temp: %i" % (year, temp))
 
+    # exclude values of 9999 (no data)
     if temp >= 9999:
         temp = 0
 
+    # scale temperature by 10
     return (year, temp / float(10))
 
 if __name__ == "__main__":
